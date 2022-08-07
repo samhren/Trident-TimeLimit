@@ -1,5 +1,6 @@
 package net.sxmaa.timelimiter;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.event.*;
 import net.minecraftforge.common.MinecraftForge;
 
@@ -12,6 +13,9 @@ public class CommonProxy {
 
         TimeLimiter.info(Config.greeting);
         TimeLimiter.info("I am " + Tags.MODNAME + " at version " + Tags.VERSION + " and group name " + Tags.GROUPNAME);
+
+        ModConfig.init(event.getModConfigurationDirectory().toString());
+        FMLCommonHandler.instance().bus().register(new ModConfig());
     }
 
     // load "Do your mod setup. Build whatever data structures you care about. Register recipes."
