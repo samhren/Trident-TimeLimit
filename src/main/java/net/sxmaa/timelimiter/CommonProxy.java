@@ -9,8 +9,8 @@ public class CommonProxy {
     public void preInit(FMLPreInitializationEvent event) {
         Config.syncronizeConfiguration(event.getSuggestedConfigurationFile());
 
-        MyMod.info(Config.greeting);
-        MyMod.info("I am " + Tags.MODNAME + " at version " + Tags.VERSION + " and group name " + Tags.GROUPNAME);
+        TimeLimiter.info(Config.greeting);
+        TimeLimiter.info("I am " + Tags.MODNAME + " at version " + Tags.VERSION + " and group name " + Tags.GROUPNAME);
     }
 
     // load "Do your mod setup. Build whatever data structures you care about. Register recipes."

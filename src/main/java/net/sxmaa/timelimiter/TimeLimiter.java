@@ -1,10 +1,17 @@
 package net.sxmaa.timelimiter;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.*;
+import net.minecraft.server.MinecraftServer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 
 @Mod(modid = Tags.MODID, version = Tags.VERSION, name = Tags.MODNAME, acceptedMinecraftVersions = "[1.7.10]")
 public class TimeLimiter {
@@ -13,6 +20,8 @@ public class TimeLimiter {
 
     @SidedProxy(clientSide = Tags.GROUPNAME + ".ClientProxy", serverSide = Tags.GROUPNAME + ".CommonProxy")
     public static CommonProxy proxy;
+    private Timer timer;
+    static ArrayList<Living> Playerlist;
 
     @Mod.EventHandler
     // preInit "Run before anything else. Read your config, create blocks, items,
@@ -58,6 +67,43 @@ public class TimeLimiter {
     public void serverStopped(FMLServerStoppedEvent event) {
         proxy.serverStopped(event);
     }
+
+    public MinecraftServer getServer() {
+        return FMLCommonHandler.instance().getMinecraftServerInstance();
+    }
+
+    public static String getSideString() {
+        return FMLCommonHandler.instance().getSide().toString().toLowerCase();
+    }
+
+    void setupTimer(final long time) {
+        if (this.timer != null) {
+            this.timer.cancel();
+        }
+        this.timer = new Timer();
+        final long delay = Config.instance.delay;
+        if (delay > 0L) {
+            this.timer.scheduleAtFixedRate(new TimerTask() {
+                @Override
+                public void run() {
+                    //5 min check
+                }
+            }, new Date(time), delay);
+        }
+        else {
+            this.timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    //first start
+                }
+            }, new Date(time));
+        }
+    }
+
+    void setupTimerDelay(final long delay) {
+        this.setupTimer(System.currentTimeMillis() + delay);
+    }
+
 
     public static void debug(String message) {
         LOG.debug(message);
