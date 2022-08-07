@@ -1,6 +1,7 @@
 package net.sxmaa.timelimiter;
 
 import cpw.mods.fml.common.event.*;
+import net.minecraftforge.common.MinecraftForge;
 
 public class CommonProxy {
 
@@ -14,7 +15,10 @@ public class CommonProxy {
     }
 
     // load "Do your mod setup. Build whatever data structures you care about. Register recipes."
-    public void init(FMLInitializationEvent event) {}
+    public void init(FMLInitializationEvent event) {
+        System.out.println("hello from common fml init");
+        MinecraftForge.EVENT_BUS.register(new EventListener());
+    }
 
     // postInit "Handle interaction with other mods, complete your setup based on this."
     public void postInit(FMLPostInitializationEvent event) {}

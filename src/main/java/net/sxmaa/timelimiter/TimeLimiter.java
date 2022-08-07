@@ -4,24 +4,24 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.*;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 
 @Mod(modid = Tags.MODID, version = Tags.VERSION, name = Tags.MODNAME, acceptedMinecraftVersions = "[1.7.10]")
 public class TimeLimiter {
 
+    @Mod.Instance("timelimiter")
+    public static TimeLimiter instance;
     private static Logger LOG = LogManager.getLogger(Tags.MODID);
 
     @SidedProxy(clientSide = Tags.GROUPNAME + ".ClientProxy", serverSide = Tags.GROUPNAME + ".CommonProxy")
     public static CommonProxy proxy;
     private Timer timer;
-    static ArrayList<Living> Playerlist;
+    static HashMap<EntityPlayer, Date> Playerlist;
 
     @Mod.EventHandler
     // preInit "Run before anything else. Read your config, create blocks, items,
@@ -56,6 +56,9 @@ public class TimeLimiter {
     @Mod.EventHandler
     public void serverStarted(FMLServerStartedEvent event) {
         proxy.serverStarted(event);
+        this.setupTimerDelay(5);
+        info("hello from server started event");
+        System.out.println("eyo from server started");
     }
 
     @Mod.EventHandler
@@ -81,7 +84,7 @@ public class TimeLimiter {
             this.timer.cancel();
         }
         this.timer = new Timer();
-        final long delay = Config.instance.delay;
+        final long delay = 5;
         if (delay > 0L) {
             this.timer.scheduleAtFixedRate(new TimerTask() {
                 @Override
