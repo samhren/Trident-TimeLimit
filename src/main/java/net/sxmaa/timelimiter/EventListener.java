@@ -13,25 +13,29 @@ public class EventListener{
         System.out.println("hello from event listener ------");
     }
 
+    @SubscribeEvent
+    public void test(final PlayerEvent.ItemPickupEvent event) {
+        System.out.println("TEST SUCCESSFULL");
+    }
 
     @SubscribeEvent
-    public static void login(final PlayerEvent.PlayerLoggedInEvent event) {
-        TimeLimiter.Playerlist.put(event.player, new java.util.Date(System.currentTimeMillis()));
+    public void login(final PlayerEvent.PlayerLoggedInEvent event) {
+        System.out.println("--player joined--");
+        CommonProxy.plist.add(event.player);
+        //TimeLimiter.Playerlist.put(event.player, new java.util.Date(System.currentTimeMillis()));
 
-        //assert TimeLimiter.Playerlist != null;
-        System.out.println("current players:"+ TimeLimiter.Playerlist);
+        System.out.println("current players:"+ CommonProxy.plist);
         EventListener.playerOnline = true;
     }
 
 
     @SubscribeEvent
-    public static void logout(final PlayerEvent.PlayerLoggedOutEvent event) {
-        if (TimeLimiter.Playerlist != null) {
-            TimeLimiter.Playerlist.remove(event.player);
-        }
+    public void logout(final PlayerEvent.PlayerLoggedOutEvent event) {
+        System.out.println("--player left--");
+        CommonProxy.plist.remove(event.player);
 
         //assert TimeLimiter.Playerlist != null;
-        System.out.println("current players:"+ TimeLimiter.Playerlist);
+        System.out.println("current players:"+ CommonProxy.plist);
     }
 
     static {

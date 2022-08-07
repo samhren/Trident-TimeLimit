@@ -21,7 +21,7 @@ public class TimeLimiter {
     @SidedProxy(clientSide = Tags.GROUPNAME + ".ClientProxy", serverSide = Tags.GROUPNAME + ".CommonProxy")
     public static CommonProxy proxy;
     private Timer timer;
-    static HashMap<EntityPlayer, Date> Playerlist;
+    public static HashMap<EntityPlayer, Date> Playerlist;
 
     @Mod.EventHandler
     // preInit "Run before anything else. Read your config, create blocks, items,
