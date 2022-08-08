@@ -19,6 +19,7 @@ public class CommonProxy {
 
     public static void addPlayer(EntityPlayer player, Date time) {
         playerlist.put(player, time);
+        TimeLimiter.proxy.playerTimeWallet.update(player.getUniqueID().toString(),0);
         System.out.println("Players: "+playerlist);
     }
 
