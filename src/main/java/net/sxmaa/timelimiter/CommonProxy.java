@@ -11,6 +11,7 @@ public class CommonProxy {
 
     public static ArrayList<EntityPlayer> plist = new ArrayList<>();
     private static HashMap<EntityPlayer, Date> playerlist = new HashMap<>();
+    public ModConfig modConfig;
     private Timer timer;
     private Date now;
 
@@ -32,7 +33,7 @@ public class CommonProxy {
         TimeLimiter.info(Config.greeting);
         TimeLimiter.info("I am " + Tags.MODNAME + " at version " + Tags.VERSION + " and group name " + Tags.GROUPNAME);
 
-        ModConfig modConfig = new ModConfig(
+        this.modConfig = new ModConfig(
             event.getSuggestedConfigurationFile()
         );
     }
