@@ -18,11 +18,6 @@ public class EventListener{
     }
 
     @SubscribeEvent
-    public void test(final PlayerEvent.ItemPickupEvent event) {
-        TimeLimiter.logToChat("TEST SUCCESSFULL", event.player);
-    }
-
-    @SubscribeEvent
     public void login(final PlayerEvent.PlayerLoggedInEvent event) {
         now = Date.from(Instant.now());
 

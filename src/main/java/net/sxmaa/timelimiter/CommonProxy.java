@@ -54,7 +54,7 @@ public class CommonProxy {
     public void serverStarting(FMLServerStartingEvent event) {}
 
     public void serverStarted(FMLServerStartedEvent event) {
-        this.setupTimerDelay(5);
+        this.setupTimerDelay(modConfig.get_playerTimeLimitUpdateInterval()* 1000L);
     }
 
     public void serverStopping(FMLServerStoppingEvent event) {}
@@ -66,7 +66,7 @@ public class CommonProxy {
             this.timer.cancel();
         }
         this.timer = new Timer();
-        final long delay = ;
+        final long delay = modConfig.get_playerTimeLimitUpdateInterval()* 1000L;
         if (delay > 0L) {
             this.timer.scheduleAtFixedRate(new TimerTask() {
                 @Override
