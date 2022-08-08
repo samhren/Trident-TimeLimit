@@ -12,7 +12,7 @@ public class PlayerTimeWallet extends Configuration{
     public static final String CATEGORY_TIME_WALLET = "time wallet";
 
     public PlayerTimeWallet(String configDir) {
-        
+
         super(
             new File(configDir + "PlayerTimeWallet.java")
         );
@@ -39,7 +39,6 @@ public class PlayerTimeWallet extends Configuration{
 
             TimeWallet.put(PlayerUuid, PlayerTimeAllowance);
         }
-
     }
 
     private void updateWallet() {
@@ -62,9 +61,14 @@ public class PlayerTimeWallet extends Configuration{
 
     public void update(String uuid) {
 
-        Integer legacyTimeLimit = TimeWallet.get(uuid);
         int timeUpdateInterval = TimeLimiter.proxy.modConfig.get_playerTimeLimitResetInterval();
-        TimeWallet.put(uuid, legacyTimeLimit - timeUpdateInterval);
+        this.update(uuid, timeUpdateInterval);
+    }
+
+    public void update(String uuid, int time) {
+
+        Integer legacyTimeLimit = TimeWallet.get(uuid);
+        TimeWallet.put(uuid, legacyTimeLimit - time);
         
         updateWallet();
     }
@@ -83,5 +87,4 @@ public class PlayerTimeWallet extends Configuration{
 
         updateWallet();
     }
-
 }
