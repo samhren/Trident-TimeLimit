@@ -84,7 +84,7 @@ public class CommonProxy {
                     now = System.currentTimeMillis();
                     playerlist.forEach((entityPlayer, date) -> {
                         if((date.getTime() - now) < Udelay) {
-                            playerTimeWallet.update(entityPlayer.getUniqueID().toString(),round(date.getTime() - now)/1000);
+                            playerTimeWallet.update(entityPlayer.getUniqueID().toString(),round(now - date.getTime())/1000);
                         } else {
                             playerTimeWallet.update(entityPlayer.getUniqueID().toString());
                         }
