@@ -17,9 +17,9 @@ public class CommonProxy {
 
         TimeLimiter.info(Config.greeting);
         TimeLimiter.info("I am " + Tags.MODNAME + " at version " + Tags.VERSION + " and group name " + Tags.GROUPNAME);
-        
+
         ModConfig modConfig = new ModConfig(
-            event.getModConfigurationDirectory().toString()
+            event.getSuggestedConfigurationFile()
         );
     }
 
