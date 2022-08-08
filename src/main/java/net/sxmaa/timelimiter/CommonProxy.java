@@ -4,17 +4,18 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.event.*;
 import net.minecraft.entity.player.EntityPlayer;
 
-import java.time.Instant;
 import java.util.*;
+
+import static java.lang.Math.round;
 
 public class CommonProxy {
 
-    public static ArrayList<EntityPlayer> plist = new ArrayList<>();
-    private static HashMap<EntityPlayer, Date> playerlist = new HashMap<>();
+    private static final HashMap<EntityPlayer, Date> playerlist = new HashMap<>();
     public ModConfig modConfig;
     public PlayerTimeWallet playerTimeWallet;
     private Timer timer;
-    private Date now;
+    private long now;
+    private long Udelay;
 
     public static void addPlayer(EntityPlayer player, Date time) {
         playerlist.put(player, time);
@@ -22,6 +23,8 @@ public class CommonProxy {
     }
 
     public static void removePlayer(EntityPlayer player) {
+        final int jj = round((playerlist.get(player).getTime() - System.currentTimeMillis() % TimeLimiter.proxy.modConfig.playerTimeLimitUpdateInterval*1000));
+        TimeLimiter.proxy.playerTimeWallet.update(player.getUniqueID().toString(),jj/1000);
         playerlist.remove(player);
         System.out.println("Players: "+playerlist);
     }
@@ -59,7 +62,8 @@ public class CommonProxy {
     public void serverStarting(FMLServerStartingEvent event) {}
 
     public void serverStarted(FMLServerStartedEvent event) {
-        this.setupTimerDelay(modConfig.get_playerTimeLimitUpdateInterval()* 1000L);
+        Udelay = modConfig.get_playerTimeLimitUpdateInterval()* 1000L;
+        this.setupTimerDelay(Udelay);
     }
 
     public void serverStopping(FMLServerStoppingEvent event) {}
@@ -71,18 +75,21 @@ public class CommonProxy {
             this.timer.cancel();
         }
         this.timer = new Timer();
-        final long delay = modConfig.get_playerTimeLimitUpdateInterval()* 1000L;
-        if (delay > 0L) {
+        if (Udelay > 0L) {
             this.timer.scheduleAtFixedRate(new TimerTask() {
                 @Override
                 public void run() {
-                    now = Date.from(Instant.now());
+                    now = System.currentTimeMillis();
                     playerlist.forEach((entityPlayer, date) -> {
+                        if((date.getTime() - now) < Udelay) {
+                            playerTimeWallet.update(entityPlayer.getUniqueID().toString(),round(date.getTime() - now)/1000);
+                        } else {
+                            playerTimeWallet.update(entityPlayer.getUniqueID().toString());
+                        }
                         TimeLimiter.logToChat(date.toString(),entityPlayer);
-                        playerTimeWallet.update(entityPlayer.getUniqueID().toString());
                     });
                 }
-            }, new Date(time), delay);
+            }, new Date(time), Udelay);
         }
         else {
             this.timer.schedule(new TimerTask() {

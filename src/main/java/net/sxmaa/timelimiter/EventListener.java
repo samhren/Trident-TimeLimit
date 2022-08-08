@@ -35,7 +35,6 @@ public class EventListener{
         System.out.println("--player left--");
         CommonProxy.removePlayer(event.player);
         EventListener.playerOnline = false;
-
     }
 
     static {
