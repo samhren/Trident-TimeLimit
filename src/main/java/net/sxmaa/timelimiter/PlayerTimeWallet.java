@@ -5,7 +5,7 @@ import java.util.HashMap;
 import net.minecraftforge.common.config.Configuration;
 
 public class PlayerTimeWallet extends Configuration{
-    
+
     private String[] TimeWalletDump;
     public HashMap<String, Integer> TimeWallet = new HashMap<String, Integer>();
 
@@ -14,23 +14,22 @@ public class PlayerTimeWallet extends Configuration{
     public PlayerTimeWallet(String configDir) {
 
         super(
-            new File(configDir + "PlayerTimeWallet.java")
+            new File(configDir + "/PlayerTimeWallet.cfg")
         );
-
         super.load();
         loadWallet();
         super.save();
     }
 
     private void loadWallet() {
-        
+
         this.TimeWalletDump = super.getStringList(
-            "player time wallet", 
-            this.CATEGORY_TIME_WALLET, 
-            new String[0], 
+            "player time wallet",
+            this.CATEGORY_TIME_WALLET,
+            new String[0],
             "Stores the time each player has left to play in the current cycle."
         );
-        
+
         for(String IndividualWallet : TimeWalletDump) {
 
             String[] DataDumpArray = IndividualWallet.split(" ");
@@ -51,7 +50,7 @@ public class PlayerTimeWallet extends Configuration{
         );
 
         super.get(
-            this.CATEGORY_TIME_WALLET, 
+            this.CATEGORY_TIME_WALLET,
             "player time wallet",
             new String[0]
         ).set(
@@ -67,21 +66,24 @@ public class PlayerTimeWallet extends Configuration{
 
     public void update(String uuid, int time) {
 
-        Integer legacyTimeLimit = TimeWallet.get(uuid);
+        Integer legacyTimeLimit = TimeLimiter.proxy.modConfig.get_playerTimeLimit();
+        try{
+            legacyTimeLimit = TimeWallet.get(uuid);
+        } catch(NullPointerException e) {}
+
         TimeWallet.put(uuid, legacyTimeLimit - time);
-        
         updateWallet();
     }
 
     public int getTime(String uuid) {
-        
+
         int time = TimeWallet.get(uuid);
         time = time < 0 ? 0 : time;
         return time;
     }
 
     public void reset() {
-        
+
         int defaultTimeAllowance = TimeLimiter.proxy.modConfig.get_playerTimeLimit();
         TimeWallet.forEach((uuid, time) -> TimeWallet.put(uuid, time + defaultTimeAllowance));
 
