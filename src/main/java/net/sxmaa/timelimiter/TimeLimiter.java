@@ -6,6 +6,7 @@ import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.*;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.ChatComponentText;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -20,8 +21,6 @@ public class TimeLimiter {
 
     @SidedProxy(clientSide = Tags.GROUPNAME + ".ClientProxy", serverSide = Tags.GROUPNAME + ".CommonProxy")
     public static CommonProxy proxy;
-    private Timer timer;
-    public static HashMap<EntityPlayer, Date> Playerlist;
 
     @Mod.EventHandler
     // preInit "Run before anything else. Read your config, create blocks, items,
@@ -56,7 +55,6 @@ public class TimeLimiter {
     @Mod.EventHandler
     public void serverStarted(FMLServerStartedEvent event) {
         proxy.serverStarted(event);
-        this.setupTimerDelay(5);
         info("hello from server started event");
         System.out.println("eyo from server started");
     }
@@ -79,34 +77,6 @@ public class TimeLimiter {
         return FMLCommonHandler.instance().getSide().toString().toLowerCase();
     }
 
-    void setupTimer(final long time) {
-        if (this.timer != null) {
-            this.timer.cancel();
-        }
-        this.timer = new Timer();
-        final long delay = 5;
-        if (delay > 0L) {
-            this.timer.scheduleAtFixedRate(new TimerTask() {
-                @Override
-                public void run() {
-                    //5 min check
-                }
-            }, new Date(time), delay);
-        }
-        else {
-            this.timer.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    //first start
-                }
-            }, new Date(time));
-        }
-    }
-
-    void setupTimerDelay(final long delay) {
-        this.setupTimer(System.currentTimeMillis() + delay);
-    }
-
 
     public static void debug(String message) {
         LOG.debug(message);
@@ -122,5 +92,9 @@ public class TimeLimiter {
 
     public static void error(String message) {
         LOG.error(message);
+    }
+
+    public static void logToChat(String message, EntityPlayer player) {
+        player.addChatMessage(new ChatComponentText(message));
     }
 }
