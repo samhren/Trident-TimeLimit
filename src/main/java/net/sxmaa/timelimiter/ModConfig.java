@@ -68,7 +68,7 @@ public class ModConfig extends Configuration
         return playerTimeLimit;
     }
 
-    public int get_playerTimeLimitUpdateInterval() {
+    public long get_playerTimeLimitUpdateInterval() {
         return playerTimeLimitUpdateInterval;
     }
 }

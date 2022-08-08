@@ -11,6 +11,7 @@ public class CommonProxy {
     public static ArrayList<EntityPlayer> plist = new ArrayList<>();
     private static HashMap<EntityPlayer, Date> playerlist = new HashMap<>();
     public ModConfig modConfig;
+    public PlayerTimeWallet playerTimeWallet;
     private Timer timer;
 
     public static void addPlayer(EntityPlayer player, Date time) {
@@ -33,6 +34,10 @@ public class CommonProxy {
 
         this.modConfig = new ModConfig(
             event.getSuggestedConfigurationFile()
+        );
+
+        this.playerTimeWallet = new PlayerTimeWallet(
+            event.getModConfigurationDirectory().toString()
         );
     }
 
