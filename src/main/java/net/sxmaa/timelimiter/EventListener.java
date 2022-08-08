@@ -11,7 +11,7 @@ import java.util.Date;
 public class EventListener{
 
     static boolean playerOnline;
-    Date now;
+    private Date now;
 
     EventListener() {
         System.out.println("hello from event listener ------");

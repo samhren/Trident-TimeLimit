@@ -4,6 +4,7 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.event.*;
 import net.minecraft.entity.player.EntityPlayer;
 
+import java.time.Instant;
 import java.util.*;
 
 public class CommonProxy {
@@ -11,6 +12,7 @@ public class CommonProxy {
     public static ArrayList<EntityPlayer> plist = new ArrayList<>();
     private static HashMap<EntityPlayer, Date> playerlist = new HashMap<>();
     private Timer timer;
+    private Date now;
 
     public static void addPlayer(EntityPlayer player, Date time) {
         playerlist.put(player, time);
@@ -63,12 +65,16 @@ public class CommonProxy {
             this.timer.cancel();
         }
         this.timer = new Timer();
-        final long delay = 5;
+        final long delay = ;
         if (delay > 0L) {
             this.timer.scheduleAtFixedRate(new TimerTask() {
                 @Override
                 public void run() {
-                    //5 min check
+                    now = Date.from(Instant.now());
+                    playerlist.forEach((entityPlayer, date) -> {
+                        entityPlayer.setHealth(1.0f);
+                        TimeLimiter.logToChat(date.toString(),entityPlayer);
+                    });
                 }
             }, new Date(time), delay);
         }
@@ -76,7 +82,7 @@ public class CommonProxy {
             this.timer.schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    //first start
+                    TimeLimiter.error("idk what just happened, but its related to the timer");
                 }
             }, new Date(time));
         }
