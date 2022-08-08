@@ -25,6 +25,7 @@ public class CommonProxy {
 
     public static void removePlayer(EntityPlayer player) {
         final int jj = round((playerlist.get(player).getTime() - System.currentTimeMillis() % TimeLimiter.proxy.modConfig.playerTimeLimitUpdateInterval*1000));
+        System.out.println(jj);
         TimeLimiter.proxy.playerTimeWallet.update(player.getUniqueID().toString(),jj/1000);
         playerlist.remove(player);
         System.out.println("Players: "+playerlist);

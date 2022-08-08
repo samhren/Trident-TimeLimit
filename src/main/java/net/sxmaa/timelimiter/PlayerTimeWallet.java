@@ -74,9 +74,9 @@ public class PlayerTimeWallet extends Configuration{
             legacyTimeLimit = TimeLimiter.proxy.modConfig.get_playerTimeLimit();
         }
 
-        System.out.println(this.TimeWallet.toString());
-        System.out.println(uuid);
+        System.out.println(time);
         System.out.println(legacyTimeLimit);
+        
         this.TimeWallet.put(uuid, legacyTimeLimit - time);
         updateWallet();
     }
