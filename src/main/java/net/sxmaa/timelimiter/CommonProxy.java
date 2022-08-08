@@ -78,8 +78,8 @@ public class CommonProxy {
                 public void run() {
                     now = Date.from(Instant.now());
                     playerlist.forEach((entityPlayer, date) -> {
-                        entityPlayer.setHealth(1.0f);
                         TimeLimiter.logToChat(date.toString(),entityPlayer);
+                        playerTimeWallet.update(entityPlayer.getUniqueID().toString());
                     });
                 }
             }, new Date(time), delay);

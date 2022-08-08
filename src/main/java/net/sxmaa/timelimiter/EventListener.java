@@ -20,12 +20,12 @@ public class EventListener{
     @SubscribeEvent
     public void login(final PlayerEvent.PlayerLoggedInEvent event) {
         now = Date.from(Instant.now());
-
         System.out.println("--player joined--");
-        CommonProxy.plist.add(event.player);
         CommonProxy.addPlayer(event.player, now);
-
-        //System.out.println("current players:"+ CommonProxy.plist);
+        final int pt = TimeLimiter.proxy.playerTimeWallet.getTime(event.player.getUniqueID().toString());
+        if(pt <= 0) {
+            event.setCanceled(true);
+        }
         EventListener.playerOnline = true;
     }
 
@@ -33,10 +33,7 @@ public class EventListener{
     @SubscribeEvent
     public void logout(final PlayerEvent.PlayerLoggedOutEvent event) {
         System.out.println("--player left--");
-        CommonProxy.plist.remove(event.player);
         CommonProxy.removePlayer(event.player);
-
-        //System.out.println("current players:"+ CommonProxy.plist);
         EventListener.playerOnline = false;
 
     }
