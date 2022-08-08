@@ -2,6 +2,7 @@ package net.sxmaa.timelimiter;
 
 import java.io.File;
 import java.util.HashMap;
+
 import net.minecraftforge.common.config.Configuration;
 
 public class PlayerTimeWallet extends Configuration{
@@ -56,6 +57,8 @@ public class PlayerTimeWallet extends Configuration{
         ).set(
             TimeWalletDump
         );
+
+        super.save();
     }
 
     public void update(String uuid) {
@@ -66,12 +69,15 @@ public class PlayerTimeWallet extends Configuration{
 
     public void update(String uuid, int time) {
 
-        Integer legacyTimeLimit = TimeLimiter.proxy.modConfig.get_playerTimeLimit();
-        try{
-            legacyTimeLimit = TimeWallet.get(uuid);
-        } catch(NullPointerException e) {}
+        Integer legacyTimeLimit = this.TimeWallet.get(uuid);
+        if(legacyTimeLimit == null) {
+            legacyTimeLimit = TimeLimiter.proxy.modConfig.get_playerTimeLimit();
+        }
 
-        TimeWallet.put(uuid, legacyTimeLimit - time);
+        System.out.println(this.TimeWallet.toString());
+        System.out.println(uuid);
+        System.out.println(legacyTimeLimit);
+        this.TimeWallet.put(uuid, legacyTimeLimit - time);
         updateWallet();
     }
 
