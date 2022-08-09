@@ -11,7 +11,6 @@ import java.util.Date;
 public class EventListener{
 
     static boolean playerOnline;
-    private Date now;
 
     EventListener() {
         System.out.println("hello from event listener ------");
@@ -19,7 +18,7 @@ public class EventListener{
 
     @SubscribeEvent
     public void login(final PlayerEvent.PlayerLoggedInEvent event) {
-        now = Date.from(Instant.now());
+        Date now = Date.from(Instant.now());
         System.out.println("--player joined--");
         CommonProxy.addPlayer(event.player, now);
         final int pt = TimeLimiter.proxy.playerTimeWallet.getTime(event.player.getUniqueID().toString());

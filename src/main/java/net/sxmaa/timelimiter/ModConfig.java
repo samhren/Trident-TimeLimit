@@ -23,14 +23,14 @@ public class ModConfig extends Configuration
 
         this.doPlayerTimeLimit = this.getBoolean(
             "do player time limit",
-            super.CATEGORY_GENERAL,
+            CATEGORY_GENERAL,
             true,
             "Limit the time every player can spend on the server"
         );
 
         this.playerTimeLimitResetInterval = this.getInt(
             "time limit reset interval",
-            super.CATEGORY_GENERAL,
+            CATEGORY_GENERAL,
             86400, //1 day
             0,
             604800, //1 week
@@ -39,7 +39,7 @@ public class ModConfig extends Configuration
 
         this.playerTimeLimit = this.getInt(
             "player time limit",
-            super.CATEGORY_GENERAL,
+            CATEGORY_GENERAL,
             7200, //2 hours
             0,
             playerTimeLimitResetInterval,
@@ -47,10 +47,10 @@ public class ModConfig extends Configuration
         );
 
         this.playerTimeUpdateInterval = this.getInt(
-            "player time update interval", 
-            super.CATEGORY_GENERAL, 
-            300, 1, 
-            playerTimeLimit, 
+            "player time update interval",
+            CATEGORY_GENERAL,
+            300, 1,
+            playerTimeLimit,
             "How often should the file be updated with the remaining allowance in a players time wallet?"
         );
 

@@ -34,7 +34,7 @@ public class CommonProxy {
         );
 
         int playerUpdateValue = (int)(
-            currentTimeSeconds % 
+            currentTimeSeconds %
             TimeLimiter.proxy.modConfig.get_playerTimeLimitUpdateInterval()
         );
 
@@ -97,23 +97,19 @@ public class CommonProxy {
                     now = System.currentTimeMillis();
                     playerlist.forEach((entityPlayer, date) -> {
                         if((date.getTime() - now) < Udelay) {
-                            TimeLimiter.logToChat("update happening with "+modConfig.get_playerTimeLimitUpdateInterval(), entityPlayer);
-                            TimeLimiter.logToChat("Player has before update:"+playerTimeWallet.getTime(entityPlayer.getUniqueID().toString()),entityPlayer);
                             int timeToLogin = (int) (
                                 Math.ceil(
                                     System.currentTimeMillis() -
                                     playerlist.get(entityPlayer).getTime()
                                 )
                                 / 1000
-                            ); 
-                            int timeUpdate = timeToLogin < (int)modConfig.get_playerTimeLimitUpdateInterval() ? timeToLogin : (int)modConfig.get_playerTimeLimitUpdateInterval();
+                            );
+                            int timeUpdate = Math.min(timeToLogin, (int) modConfig.get_playerTimeLimitUpdateInterval());
                             playerTimeWallet.update(entityPlayer.getUniqueID().toString(), timeUpdate);
-                            TimeLimiter.logToChat("Player has after update:"+playerTimeWallet.getTime(entityPlayer.getUniqueID().toString()),entityPlayer);
 
                         } else {
                             playerTimeWallet.update(entityPlayer.getUniqueID().toString());
                         }
-                        TimeLimiter.logToChat(date.toString(),entityPlayer);
                     });
                 }
             }, new Date(time), Udelay);

@@ -94,7 +94,4 @@ public class TimeLimiter {
         LOG.error(message);
     }
 
-    public static void logToChat(String message, EntityPlayer player) {
-        player.addChatMessage(new ChatComponentText(message));
-    }
 }
