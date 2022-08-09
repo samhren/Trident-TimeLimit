@@ -63,7 +63,7 @@ public class CommonProxy {
     public void serverStarting(FMLServerStartingEvent event) {}
 
     public void serverStarted(FMLServerStartedEvent event) {
-        Udelay = modConfig.get_playerTimeLimitUpdateInterval()* 1000L;
+        Udelay = modConfig.get_playerTimeLimitUpdateInterval()* 1000;
         this.setupTimerDelay(Udelay);
     }
 
