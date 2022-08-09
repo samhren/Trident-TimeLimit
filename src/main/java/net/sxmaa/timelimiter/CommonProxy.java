@@ -27,8 +27,8 @@ public class CommonProxy {
 
         int currentTimeSeconds = (int) (
             Math.ceil(
-                System.currentTimeMillis() 
-                - playerlist.get(player).getTime()
+                System.currentTimeMillis() -
+                playerlist.get(player).getTime()
             )
             / 1000
         );
@@ -38,6 +38,7 @@ public class CommonProxy {
             TimeLimiter.proxy.modConfig.get_playerTimeLimitUpdateInterval()
         );
 
+        System.out.println(playerUpdateValue);
         TimeLimiter.proxy.playerTimeWallet.update(player.getUniqueID().toString(), playerUpdateValue);
         playerlist.remove(player);
     }
@@ -45,7 +46,7 @@ public class CommonProxy {
     // preInit "Run before anything else. Read your config, create blocks, items,
     // etc, and register them with the GameRegistry."
     public void preInit(FMLPreInitializationEvent event) {
-        
+
         Config.syncronizeConfiguration(event.getSuggestedConfigurationFile());
 
         TimeLimiter.info(Config.greeting);
@@ -98,7 +99,15 @@ public class CommonProxy {
                         if((date.getTime() - now) < Udelay) {
                             TimeLimiter.logToChat("update happening with "+modConfig.get_playerTimeLimitUpdateInterval(), entityPlayer);
                             TimeLimiter.logToChat("Player has before update:"+playerTimeWallet.getTime(entityPlayer.getUniqueID().toString()),entityPlayer);
-                            playerTimeWallet.update(entityPlayer.getUniqueID().toString());
+                            int timeToLogin = (int) (
+                                Math.ceil(
+                                    System.currentTimeMillis() -
+                                    playerlist.get(entityPlayer).getTime()
+                                )
+                                / 1000
+                            ); 
+                            int timeUpdate = timeToLogin < (int)modConfig.get_playerTimeLimitUpdateInterval() ? timeToLogin : (int)modConfig.get_playerTimeLimitUpdateInterval();
+                            playerTimeWallet.update(entityPlayer.getUniqueID().toString(), timeUpdate);
                             TimeLimiter.logToChat("Player has after update:"+playerTimeWallet.getTime(entityPlayer.getUniqueID().toString()),entityPlayer);
 
                         } else {
