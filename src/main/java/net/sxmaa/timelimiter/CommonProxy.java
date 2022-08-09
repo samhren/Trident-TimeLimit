@@ -6,7 +6,6 @@ import net.minecraft.entity.player.EntityPlayer;
 
 import java.util.*;
 
-import static java.lang.Math.round;
 
 public class CommonProxy {
 
@@ -18,20 +17,35 @@ public class CommonProxy {
     private long Udelay;
 
     public static void addPlayer(EntityPlayer player, Date time) {
+
         playerlist.put(player, time);
         TimeLimiter.proxy.playerTimeWallet.update(player.getUniqueID().toString(),0);
         System.out.println("Players: "+playerlist);
     }
 
     public static void removePlayer(EntityPlayer player) {
-        final int jj = (int)(round((System.currentTimeMillis() - playerlist.get(player).getTime())/1000) % TimeLimiter.proxy.modConfig.get_playerTimeLimitUpdateInterval());
-        TimeLimiter.proxy.playerTimeWallet.update(player.getUniqueID().toString(),jj/1000);
+
+        int currentTimeSeconds = (int) (
+            Math.ceil(
+                System.currentTimeMillis() 
+                - playerlist.get(player).getTime()
+            )
+            / 1000
+        );
+
+        int playerUpdateValue = (int)(
+            currentTimeSeconds % 
+            TimeLimiter.proxy.modConfig.get_playerTimeLimitUpdateInterval()
+        );
+
+        TimeLimiter.proxy.playerTimeWallet.update(player.getUniqueID().toString(), playerUpdateValue);
         playerlist.remove(player);
     }
 
     // preInit "Run before anything else. Read your config, create blocks, items,
     // etc, and register them with the GameRegistry."
     public void preInit(FMLPreInitializationEvent event) {
+        
         Config.syncronizeConfiguration(event.getSuggestedConfigurationFile());
 
         TimeLimiter.info(Config.greeting);
