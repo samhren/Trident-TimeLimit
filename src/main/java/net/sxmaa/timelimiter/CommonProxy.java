@@ -83,7 +83,11 @@ public class CommonProxy {
                     now = System.currentTimeMillis();
                     playerlist.forEach((entityPlayer, date) -> {
                         if((date.getTime() - now) < Udelay) {
+                            TimeLimiter.logToChat("update happening with "+modConfig.get_playerTimeLimitUpdateInterval(), entityPlayer);
+                            TimeLimiter.logToChat("Player has before update:"+playerTimeWallet.getTime(entityPlayer.getUniqueID().toString()),entityPlayer);
                             playerTimeWallet.update(entityPlayer.getUniqueID().toString(),round(now - date.getTime())/1000);
+                            TimeLimiter.logToChat("Player has after update:"+playerTimeWallet.getTime(entityPlayer.getUniqueID().toString()),entityPlayer);
+
                         } else {
                             playerTimeWallet.update(entityPlayer.getUniqueID().toString());
                         }
