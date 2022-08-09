@@ -24,10 +24,9 @@ public class CommonProxy {
     }
 
     public static void removePlayer(EntityPlayer player) {
-        final int jj = round(((System.currentTimeMillis() - playerlist.get(player).getTime()) % TimeLimiter.proxy.modConfig.playerTimeLimitUpdateInterval)*1000);
+        final int jj = (int)(round((System.currentTimeMillis() - playerlist.get(player).getTime())/1000) % TimeLimiter.proxy.modConfig.get_playerTimeLimitUpdateInterval());
         TimeLimiter.proxy.playerTimeWallet.update(player.getUniqueID().toString(),jj/1000);
         playerlist.remove(player);
-        System.out.println("Players: "+playerlist);
     }
 
     // preInit "Run before anything else. Read your config, create blocks, items,
@@ -85,7 +84,7 @@ public class CommonProxy {
                         if((date.getTime() - now) < Udelay) {
                             TimeLimiter.logToChat("update happening with "+modConfig.get_playerTimeLimitUpdateInterval(), entityPlayer);
                             TimeLimiter.logToChat("Player has before update:"+playerTimeWallet.getTime(entityPlayer.getUniqueID().toString()),entityPlayer);
-                            playerTimeWallet.update(entityPlayer.getUniqueID().toString(),round(now - date.getTime())/1000);
+                            playerTimeWallet.update(entityPlayer.getUniqueID().toString());
                             TimeLimiter.logToChat("Player has after update:"+playerTimeWallet.getTime(entityPlayer.getUniqueID().toString()),entityPlayer);
 
                         } else {

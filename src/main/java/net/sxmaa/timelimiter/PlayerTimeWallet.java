@@ -63,7 +63,7 @@ public class PlayerTimeWallet extends Configuration{
 
     public void update(String uuid) {
 
-        int timeUpdateInterval = TimeLimiter.proxy.modConfig.get_playerTimeLimitResetInterval();
+        int timeUpdateInterval = (int)Math.floor(TimeLimiter.proxy.modConfig.get_playerTimeLimitUpdateInterval());
         this.update(uuid, timeUpdateInterval);
     }
 

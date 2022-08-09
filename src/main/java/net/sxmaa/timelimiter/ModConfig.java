@@ -9,7 +9,7 @@ public class ModConfig extends Configuration
     public boolean doPlayerTimeLimit = true;
     public int playerTimeLimitResetInterval = 86400;
     public int playerTimeLimit = 7200;
-    public int playerTimeLimitUpdateInterval = 300;
+    public int playerTimeUpdateInterval = 300;
 
     public ModConfig(File configFile){
         super(configFile);
@@ -46,8 +46,8 @@ public class ModConfig extends Configuration
             "Time each player can spend on the server within one interval."
         );
 
-        this.playerTimeLimitResetInterval = this.getInt(
-            "player time limit reset interval", 
+        this.playerTimeUpdateInterval = this.getInt(
+            "player time update interval", 
             super.CATEGORY_GENERAL, 
             300, 1, 
             playerTimeLimit, 
@@ -69,7 +69,7 @@ public class ModConfig extends Configuration
     }
 
     public long get_playerTimeLimitUpdateInterval() {
-        return playerTimeLimitUpdateInterval;
+        return playerTimeUpdateInterval;
     }
 }
 
