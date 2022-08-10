@@ -31,16 +31,16 @@ public class ModConfig extends Configuration
         this.playerTimeLimitResetInterval = this.getInt(
             "time limit reset interval",
             CATEGORY_GENERAL,
-            86400, //1 day
+            86400000, //1 day
             0,
-            604800, //1 week
+            604800000, //1 week
             "Time to pass between each reset of a players time wallet to the value of \"time limit\""
         );
 
         this.playerTimeLimit = this.getInt(
             "player time limit",
             CATEGORY_GENERAL,
-            7200, //2 hours
+            7200000, //2 hours
             0,
             playerTimeLimitResetInterval,
             "Time each player can spend on the server within one interval."
@@ -49,7 +49,7 @@ public class ModConfig extends Configuration
         this.playerTimeUpdateInterval = this.getInt(
             "player time update interval",
             CATEGORY_GENERAL,
-            300, 1,
+            300000, 1,
             playerTimeLimit,
             "How often should the file be updated with the remaining allowance in a players time wallet?"
         );
