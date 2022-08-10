@@ -1,4 +1,4 @@
-//version: 1659353820
+//version: 1659977784
 /*
  DO NOT CHANGE THIS FILE!
  Also, you may replace this file at any time if there is an update available.
@@ -651,7 +651,7 @@ task updateBuildScript {
     }
 }
 
-if (isNewBuildScriptVersionAvailable(projectDir.toString())) {
+if (!project.getGradle().startParameter.isOffline() && isNewBuildScriptVersionAvailable(projectDir.toString())) {
     if (autoUpdateBuildScript.toBoolean()) {
         performBuildScriptUpdate(projectDir.toString())
     } else {
@@ -680,7 +680,7 @@ boolean performBuildScriptUpdate(String projectDir) {
     if (isNewBuildScriptVersionAvailable(projectDir)) {
         def buildscriptFile = getFile("build.gradle")
         availableBuildScriptUrl().withInputStream { i -> buildscriptFile.withOutputStream { it << i } }
-        out.style(Style.Success).print("Build script updated. Please REIMPORT the project or RESTART your IDE!")
+        println("Build script updated. Please REIMPORT the project or RESTART your IDE!")
         verifySettingsGradle()
         return true
     }
