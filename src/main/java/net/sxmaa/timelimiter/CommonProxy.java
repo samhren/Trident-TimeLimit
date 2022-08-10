@@ -29,7 +29,8 @@ public class CommonProxy {
     public static void addPlayer(EntityPlayer player, Date time) {
 
         playerlist.put(player, time);
-        TimeLimiter.proxy.playerTimeWallet.update(player.getUniqueID().toString(),0);
+        final String uuid = player.getGameProfile().getId().toString();
+        TimeLimiter.proxy.playerTimeWallet.update(uuid,0);
         System.out.println("Players: "+playerlist);
     }
 
@@ -115,15 +116,15 @@ public class CommonProxy {
                         if(playerTimeWallet.getTime(entityPlayer.getUniqueID().toString()) <= 0) {
                             ((EntityPlayerMP)entityPlayer).playerNetServerHandler.kickPlayerFromServer("Your free trial of life has expired.");
                         }
-                        Instant currentUpdate = Instant.now();
-                        Instant lastUpdate = Instant.parse(playerTimeWallet.getLastUpdate()).truncatedTo(ChronoUnit.DAYS);
-                        playerTimeWallet.overrideLastUpdate(currentUpdate.toString());
-                        if(currentUpdate.truncatedTo(ChronoUnit.DAYS).equals(lastUpdate)) {
-                            System.out.println("Still same day, not resetting playtime");
-                        } else {
-                            playerTimeWallet.reset();
-                        }
                     });
+                    Instant currentUpdate = Instant.now();
+                    Instant lastUpdate = Instant.parse(playerTimeWallet.getLastUpdate()).truncatedTo(ChronoUnit.DAYS);
+                    playerTimeWallet.overrideLastUpdate(currentUpdate.toString());
+                    if(currentUpdate.truncatedTo(ChronoUnit.DAYS).equals(lastUpdate)) {
+                        System.out.println("Still same day, not resetting playtime");
+                    } else {
+                        playerTimeWallet.reset();
+                    }
                 }
             }, new Date(time), Udelay);
         }
