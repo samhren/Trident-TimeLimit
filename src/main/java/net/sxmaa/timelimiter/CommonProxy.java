@@ -111,6 +111,7 @@ public class CommonProxy {
                     playerTimeWallet.overrideLastUpdate(currentUpdate.toString());
                     if (currentUpdate.truncatedTo(ChronoUnit.DAYS).equals(lastUpdate)) {
                     } else {
+                        System.out.println("Detected new day, resetting playtimes.");
                         playerTimeWallet.reset();
                     }
                 }
