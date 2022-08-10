@@ -5,7 +5,6 @@ import cpw.mods.fml.common.event.*;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.common.UsernameCache;
-
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -13,6 +12,7 @@ import java.util.*;
 
 public class CommonProxy {
 
+    //stores the time of the players login, and then the time of the first update 
     private static final HashMap<EntityPlayer, Date> playerlist = new HashMap<>();
     public ModConfig modConfig;
     public PlayerTimeWallet playerTimeWallet;
@@ -37,7 +37,9 @@ public class CommonProxy {
     }
 
     public static void removePlayer(EntityPlayer player) {
-        int currentTimeSeconds = (int) (
+
+        //calculates the time since the player joined the server
+        int timeSinceLogin = (int) (
             Math.ceil(
                 System.currentTimeMillis() -
                 playerlist.get(player).getTime()
@@ -45,8 +47,9 @@ public class CommonProxy {
             / 1000
         );
 
+        //
         int playerUpdateValue = (int)(
-            currentTimeSeconds %
+            timeSinceLogin %
             TimeLimiter.proxy.modConfig.get_playerTimeLimitUpdateInterval()
         );
 
@@ -110,11 +113,15 @@ public class CommonProxy {
                     now = System.currentTimeMillis();
                     playerlist.forEach((entityPlayer, date) -> {
                         int timeToLogin = (int)(now - date.getTime()) / 1000;
-                        int timeUpdate = Math.min(timeToLogin, (int) modConfig.get_playerTimeLimitUpdateInterval());
-                        playerTimeWallet.update(getPlayerUUID(entityPlayer.getDisplayName()), timeUpdate);
+                        if(timeToLogin < (int)Udelay) {
+                            playerTimeWallet.update(getPlayerUUID(entityPlayer.getDisplayName()), timeToLogin);
+                            playerlist.put(entityPlayer, Date.from(Instant.now()));
+                        } else {
+                            playerTimeWallet.update(getPlayerUUID(entityPlayer.getDisplayName()));
+                        }
 
                         if(playerTimeWallet.getTime(getPlayerUUID(entityPlayer.getDisplayName())) <= 0) {
-                            ((EntityPlayerMP)entityPlayer).playerNetServerHandler.kickPlayerFromServer("Your free trial of life has expired.");
+                            ((EntityPlayerMP)entityPlayer).playerNetServerHandler.kickPlayerFromServer("Your free trial of life has expired");
                         }
                     });
 
