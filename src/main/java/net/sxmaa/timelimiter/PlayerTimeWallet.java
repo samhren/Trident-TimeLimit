@@ -8,7 +8,7 @@ import net.minecraftforge.common.config.Configuration;
 public class PlayerTimeWallet extends Configuration{
 
     private String[] TimeWalletDump;
-    public HashMap<String, Integer> TimeWallet = new HashMap<String, Integer>();
+    public HashMap<String, Integer> TimeWallet = new HashMap<>();
     public String lastUpdate;
 
     public static final String CATEGORY_TIME_WALLET = "time wallet";
@@ -42,9 +42,9 @@ public class PlayerTimeWallet extends Configuration{
         }
 
         this.lastUpdate = super.getString(
-            "last update", 
-            CATEGORY_TIME_WALLET, 
-            "", 
+            "last update",
+            CATEGORY_TIME_WALLET,
+            "",
             "Saves the date stamp of the last player time update event."
         );
     }
@@ -72,8 +72,8 @@ public class PlayerTimeWallet extends Configuration{
     public void updateGlobalTimeStamp() {
 
         super.get(
-            this.CATEGORY_TIME_WALLET, 
-            "last update", 
+            CATEGORY_TIME_WALLET,
+            "last update",
             ""
         ).set(
             this.lastUpdate
@@ -94,13 +94,13 @@ public class PlayerTimeWallet extends Configuration{
         if(legacyTimeLimit == null) {
             legacyTimeLimit = TimeLimiter.proxy.modConfig.get_playerTimeLimit();
         }
-        
+
         this.TimeWallet.put(uuid, legacyTimeLimit - time);
         updateWallet();
     }
 
     public void overrideLastUpdate(String newStamp) {
-        
+
         this.lastUpdate = newStamp;
         this.updateGlobalTimeStamp();
     }

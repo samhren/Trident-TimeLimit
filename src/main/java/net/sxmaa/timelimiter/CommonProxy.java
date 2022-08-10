@@ -4,17 +4,11 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.event.*;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraftforge.common.UsernameCache;
 
-import java.sql.Time;
 import java.time.Instant;
-import java.time.OffsetDateTime;
-import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
-
-import org.apache.commons.lang3.time.DateUtils;
-
-import com.ibm.icu.util.DateRule;
 
 
 public class CommonProxy {
@@ -26,16 +20,23 @@ public class CommonProxy {
     private long now;
     private long Udelay;
 
-    public static void addPlayer(EntityPlayer player, Date time) {
+    public static String getPlayerUUID(String username) {
+        for (Map.Entry<UUID, String> entry : UsernameCache.getMap().entrySet()) {
+            if (entry.getValue().equalsIgnoreCase(username)) {
+                return entry.getKey().toString();
+            }
+        }
+        return null;
+    }
 
+    public static void addPlayer(EntityPlayer player, Date time) {
         playerlist.put(player, time);
-        final String uuid = player.getGameProfile().getId().toString();
+        final String uuid = String.valueOf(getPlayerUUID(player.getDisplayName()));
         TimeLimiter.proxy.playerTimeWallet.update(uuid,0);
         System.out.println("Players: "+playerlist);
     }
 
     public static void removePlayer(EntityPlayer player) {
-
         int currentTimeSeconds = (int) (
             Math.ceil(
                 System.currentTimeMillis() -
@@ -50,7 +51,7 @@ public class CommonProxy {
         );
 
         System.out.println(playerUpdateValue);
-        TimeLimiter.proxy.playerTimeWallet.update(player.getUniqueID().toString(), playerUpdateValue);
+        TimeLimiter.proxy.playerTimeWallet.update(getPlayerUUID(player.getDisplayName()), playerUpdateValue);
         playerlist.remove(player);
     }
 
@@ -60,7 +61,6 @@ public class CommonProxy {
 
         Config.syncronizeConfiguration(event.getSuggestedConfigurationFile());
 
-        TimeLimiter.info(Config.greeting);
         TimeLimiter.info("I am " + Tags.MODNAME + " at version " + Tags.VERSION + " and group name " + Tags.GROUPNAME);
 
         this.modConfig = new ModConfig(
@@ -111,9 +111,9 @@ public class CommonProxy {
                     playerlist.forEach((entityPlayer, date) -> {
                         int timeToLogin = (int)(now - date.getTime()) / 1000;
                         int timeUpdate = Math.min(timeToLogin, (int) modConfig.get_playerTimeLimitUpdateInterval());
-                        playerTimeWallet.update(entityPlayer.getUniqueID().toString(), timeUpdate);
+                        playerTimeWallet.update(getPlayerUUID(entityPlayer.getDisplayName()), timeUpdate);
 
-                        if(playerTimeWallet.getTime(entityPlayer.getUniqueID().toString()) <= 0) {
+                        if(playerTimeWallet.getTime(getPlayerUUID(entityPlayer.getDisplayName())) <= 0) {
                             ((EntityPlayerMP)entityPlayer).playerNetServerHandler.kickPlayerFromServer("Your free trial of life has expired.");
                         }
                     });

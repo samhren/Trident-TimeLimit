@@ -21,7 +21,7 @@ public class EventListener{
         Date now = Date.from(Instant.now());
         System.out.println("--player joined--");
         CommonProxy.addPlayer(event.player, now);
-        final int pt = TimeLimiter.proxy.playerTimeWallet.getTime(event.player.getUniqueID().toString());
+        final int pt = TimeLimiter.proxy.playerTimeWallet.getTime(CommonProxy.getPlayerUUID(event.player.getDisplayName()));
         if(pt <= 0) {
             event.setCanceled(true);
         }
