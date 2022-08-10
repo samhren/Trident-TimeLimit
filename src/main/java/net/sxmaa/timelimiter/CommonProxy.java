@@ -5,7 +5,11 @@ import cpw.mods.fml.common.event.*;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 
+import java.sql.Time;
 import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 import org.apache.commons.lang3.time.DateUtils;
@@ -40,7 +44,7 @@ public class CommonProxy {
         );
 
         int playerUpdateValue = (int)(
-            currentTimeSeconds % 
+            currentTimeSeconds %
             TimeLimiter.proxy.modConfig.get_playerTimeLimitUpdateInterval()
         );
 
@@ -86,8 +90,7 @@ public class CommonProxy {
     public void serverStarted(FMLServerStartedEvent event) {
         Udelay = modConfig.get_playerTimeLimitUpdateInterval()* 1000;
         this.setupTimerDelay(Udelay);
-
-        this.playerTimeWallet.overrideLastUpdate(Date.from(Instant.now()).toString());
+        this.playerTimeWallet.overrideLastUpdate(Instant.now().toString());
     }
 
     public void serverStopping(FMLServerStoppingEvent event) {}
@@ -106,15 +109,20 @@ public class CommonProxy {
                     now = System.currentTimeMillis();
                     playerlist.forEach((entityPlayer, date) -> {
                         int timeToLogin = (int)(now - date.getTime()) / 1000;
-                        int timeUpdate = timeToLogin < (int)modConfig.get_playerTimeLimitUpdateInterval() ? timeToLogin : (int)modConfig.get_playerTimeLimitUpdateInterval();
+                        int timeUpdate = Math.min(timeToLogin, (int) modConfig.get_playerTimeLimitUpdateInterval());
                         playerTimeWallet.update(entityPlayer.getUniqueID().toString(), timeUpdate);
 
                         if(playerTimeWallet.getTime(entityPlayer.getUniqueID().toString()) <= 0) {
                             ((EntityPlayerMP)entityPlayer).playerNetServerHandler.kickPlayerFromServer("Your free trial of life has expired.");
                         }
-                        
-                        Date currentUpdate = Date.from(Instant.now());
+                        Instant currentUpdate = Instant.now();
+                        Instant lastUpdate = Instant.parse(playerTimeWallet.getLastUpdate()).truncatedTo(ChronoUnit.DAYS);
                         playerTimeWallet.overrideLastUpdate(currentUpdate.toString());
+                        if(currentUpdate.truncatedTo(ChronoUnit.DAYS).equals(lastUpdate)) {
+                            System.out.println("Still same day, not resetting playtime");
+                        } else {
+                            playerTimeWallet.reset();
+                        }
                     });
                 }
             }, new Date(time), Udelay);
