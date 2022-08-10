@@ -27,7 +27,7 @@ public class PlayerTimeWallet extends Configuration{
 
         this.TimeWalletDump = super.getStringList(
             "player time wallet",
-            this.CATEGORY_TIME_WALLET,
+            CATEGORY_TIME_WALLET,
             new String[0],
             "Stores the time each player has left to play in the current cycle."
         );
@@ -59,7 +59,7 @@ public class PlayerTimeWallet extends Configuration{
         );
 
         super.get(
-            this.CATEGORY_TIME_WALLET,
+            CATEGORY_TIME_WALLET,
             "player time wallet",
             new String[0]
         ).set(
@@ -108,7 +108,7 @@ public class PlayerTimeWallet extends Configuration{
     public int getTime(String uuid) {
 
         int time = TimeWallet.get(uuid);
-        time = time < 0 ? 0 : time;
+        time = Math.max(time, 0);
         return time;
     }
 

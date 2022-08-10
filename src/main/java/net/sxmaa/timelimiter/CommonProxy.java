@@ -113,12 +113,8 @@ public class CommonProxy {
                             ((EntityPlayerMP)entityPlayer).playerNetServerHandler.kickPlayerFromServer("Your free trial of life has expired.");
                         }
                         
-                        Date currentUpdate = Date.fromInstant.now();
-                        Date lastUpdate = playerTimeWallet.getLastUpdate()
+                        Date currentUpdate = Date.from(Instant.now());
                         playerTimeWallet.overrideLastUpdate(currentUpdate.toString());
-                        TimeLimiter.logToChat(date.toString(),entityPlayer);
-
-                        if(!DateUtils(currentUpdate))
                     });
                 }
             }, new Date(time), Udelay);
