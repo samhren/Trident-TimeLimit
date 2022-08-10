@@ -3,8 +3,14 @@ package net.sxmaa.timelimiter;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.event.*;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 
+import java.time.Instant;
 import java.util.*;
+
+import org.apache.commons.lang3.time.DateUtils;
+
+import com.ibm.icu.util.DateRule;
 
 
 public class CommonProxy {
@@ -59,6 +65,7 @@ public class CommonProxy {
         this.playerTimeWallet = new PlayerTimeWallet(
             event.getModConfigurationDirectory().toString()
         );
+
     }
 
     // load "Do your mod setup. Build whatever data structures you care about. Register recipes."
@@ -79,6 +86,8 @@ public class CommonProxy {
     public void serverStarted(FMLServerStartedEvent event) {
         Udelay = modConfig.get_playerTimeLimitUpdateInterval()* 1000;
         this.setupTimerDelay(Udelay);
+
+        this.playerTimeWallet.overrideLastUpdate(Date.from(Instant.now()).toString());
     }
 
     public void serverStopping(FMLServerStoppingEvent event) {}
@@ -96,24 +105,20 @@ public class CommonProxy {
                 public void run() {
                     now = System.currentTimeMillis();
                     playerlist.forEach((entityPlayer, date) -> {
-                        if((date.getTime() - now) < Udelay) {
-                            TimeLimiter.logToChat("update happening with "+modConfig.get_playerTimeLimitUpdateInterval(), entityPlayer);
-                            TimeLimiter.logToChat("Player has before update:"+playerTimeWallet.getTime(entityPlayer.getUniqueID().toString()),entityPlayer);
-                            int timeToLogin = (int) (
-                                Math.ceil(
-                                    System.currentTimeMillis() -
-                                    playerlist.get(entityPlayer).getTime()
-                                )
-                                / 1000
-                            ); 
-                            int timeUpdate = timeToLogin < (int)modConfig.get_playerTimeLimitUpdateInterval() ? timeToLogin : (int)modConfig.get_playerTimeLimitUpdateInterval();
-                            playerTimeWallet.update(entityPlayer.getUniqueID().toString(), timeUpdate);
-                            TimeLimiter.logToChat("Player has after update:"+playerTimeWallet.getTime(entityPlayer.getUniqueID().toString()),entityPlayer);
+                        int timeToLogin = (int)(now - date.getTime()) / 1000;
+                        int timeUpdate = timeToLogin < (int)modConfig.get_playerTimeLimitUpdateInterval() ? timeToLogin : (int)modConfig.get_playerTimeLimitUpdateInterval();
+                        playerTimeWallet.update(entityPlayer.getUniqueID().toString(), timeUpdate);
 
-                        } else {
-                            playerTimeWallet.update(entityPlayer.getUniqueID().toString());
+                        if(playerTimeWallet.getTime(entityPlayer.getUniqueID().toString()) <= 0) {
+                            ((EntityPlayerMP)entityPlayer).playerNetServerHandler.kickPlayerFromServer("Your free trial of life has expired.");
                         }
+                        
+                        Date currentUpdate = Date.fromInstant.now();
+                        Date lastUpdate = playerTimeWallet.getLastUpdate()
+                        playerTimeWallet.overrideLastUpdate(currentUpdate.toString());
                         TimeLimiter.logToChat(date.toString(),entityPlayer);
+
+                        if(!DateUtils(currentUpdate))
                     });
                 }
             }, new Date(time), Udelay);

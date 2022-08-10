@@ -9,6 +9,7 @@ public class PlayerTimeWallet extends Configuration{
 
     private String[] TimeWalletDump;
     public HashMap<String, Integer> TimeWallet = new HashMap<String, Integer>();
+    public String lastUpdate;
 
     public static final String CATEGORY_TIME_WALLET = "time wallet";
 
@@ -39,6 +40,13 @@ public class PlayerTimeWallet extends Configuration{
 
             TimeWallet.put(PlayerUuid, PlayerTimeAllowance);
         }
+
+        this.lastUpdate = super.getString(
+            "last update", 
+            CATEGORY_TIME_WALLET, 
+            "", 
+            "Saves the date stamp of the last player time update event."
+        );
     }
 
     private void updateWallet() {
@@ -61,6 +69,19 @@ public class PlayerTimeWallet extends Configuration{
         super.save();
     }
 
+    public void updateGlobalTimeStamp() {
+
+        super.get(
+            this.CATEGORY_TIME_WALLET, 
+            "last update", 
+            ""
+        ).set(
+            this.lastUpdate
+        );
+
+        super.save();
+    }
+
     public void update(String uuid) {
 
         int timeUpdateInterval = (int)Math.floor(TimeLimiter.proxy.modConfig.get_playerTimeLimitUpdateInterval());
@@ -73,12 +94,15 @@ public class PlayerTimeWallet extends Configuration{
         if(legacyTimeLimit == null) {
             legacyTimeLimit = TimeLimiter.proxy.modConfig.get_playerTimeLimit();
         }
-
-        System.out.println(time);
-        System.out.println(legacyTimeLimit);
         
         this.TimeWallet.put(uuid, legacyTimeLimit - time);
         updateWallet();
+    }
+
+    public void overrideLastUpdate(String newStamp) {
+        
+        this.lastUpdate = newStamp;
+        this.updateGlobalTimeStamp();
     }
 
     public int getTime(String uuid) {
@@ -94,5 +118,10 @@ public class PlayerTimeWallet extends Configuration{
         TimeWallet.forEach((uuid, time) -> TimeWallet.put(uuid, time + defaultTimeAllowance));
 
         updateWallet();
+    }
+
+    public String getLastUpdate() {
+
+        return this.lastUpdate;
     }
 }
