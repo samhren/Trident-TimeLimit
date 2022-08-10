@@ -109,8 +109,7 @@ public class CommonProxy {
                     Instant currentUpdate = Instant.now();
                     Instant lastUpdate = Instant.parse(playerTimeWallet.getLastUpdate()).truncatedTo(ChronoUnit.DAYS);
                     playerTimeWallet.overrideLastUpdate(currentUpdate.toString());
-                    if(currentUpdate.truncatedTo(ChronoUnit.DAYS).equals(lastUpdate)) {
-                        System.out.println("Still same day, not resetting playtime");
+                    if (currentUpdate.truncatedTo(ChronoUnit.DAYS).equals(lastUpdate)) {
                     } else {
                         playerTimeWallet.reset();
                     }
