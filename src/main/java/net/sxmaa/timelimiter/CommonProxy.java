@@ -12,7 +12,7 @@ import java.util.*;
 
 public class CommonProxy {
 
-    //stores the time of the players login, and then the time of the first update 
+    //stores the time of the players login, and then the time of the first update
     private static final HashMap<EntityPlayer, Date> playerlist = new HashMap<>();
     public ModConfig modConfig;
     public PlayerTimeWallet playerTimeWallet;
