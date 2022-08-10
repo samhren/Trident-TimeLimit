@@ -12,7 +12,7 @@ import java.util.*;
 
 public class CommonProxy {
 
-    //stores the time of the players login, and then the time of the first update
+    //stores the time of the players login, and then the time of the first update 
     private static final HashMap<EntityPlayer, Date> playerlist = new HashMap<>();
     public ModConfig modConfig;
     public PlayerTimeWallet playerTimeWallet;
@@ -38,23 +38,8 @@ public class CommonProxy {
 
     public static void removePlayer(EntityPlayer player) {
 
-        //calculates the time since the player joined the server
-        int timeSinceLogin = (int) (
-            Math.ceil(
-                System.currentTimeMillis() -
-                playerlist.get(player).getTime()
-            )
-            / 1000
-        );
-
-        //
-        int playerUpdateValue = (int)(
-            timeSinceLogin %
-            TimeLimiter.proxy.modConfig.get_playerTimeLimitUpdateInterval()
-        );
-
-        System.out.println(playerUpdateValue);
-        TimeLimiter.proxy.playerTimeWallet.update(getPlayerUUID(player.getDisplayName()), playerUpdateValue);
+        int playerUpdateTime = (int)(System.currentTimeMillis() - playerlist.get(player).getTime());
+        TimeLimiter.proxy.playerTimeWallet.update(getPlayerUUID(player.getDisplayName()), playerUpdateTime);
         playerlist.remove(player);
     }
 
@@ -92,7 +77,7 @@ public class CommonProxy {
     public void serverStarting(FMLServerStartingEvent event) {}
 
     public void serverStarted(FMLServerStartedEvent event) {
-        Udelay = modConfig.get_playerTimeLimitUpdateInterval()* 1000;
+        Udelay = modConfig.get_playerTimeLimitUpdateInterval();
         this.setupTimerDelay(Udelay);
         this.playerTimeWallet.overrideLastUpdate(Instant.now().toString());
     }
@@ -112,18 +97,15 @@ public class CommonProxy {
                 public void run() {
                     now = System.currentTimeMillis();
                     playerlist.forEach((entityPlayer, date) -> {
-                        int timeToLogin = (int)(now - date.getTime()) / 1000;
-                        if(timeToLogin < (int)Udelay) {
-                            playerTimeWallet.update(getPlayerUUID(entityPlayer.getDisplayName()), timeToLogin);
-                            playerlist.put(entityPlayer, Date.from(Instant.now()));
-                        } else {
-                            playerTimeWallet.update(getPlayerUUID(entityPlayer.getDisplayName()));
-                        }
+                        int activeTimeSinceLastUpdate = (int) (now - date.getTime());
+                        playerlist.put(entityPlayer, Date.from(Instant.now()));
+                        playerTimeWallet.update(entityPlayer.getUniqueID().toString(), activeTimeSinceLastUpdate);
+
                         if(playerTimeWallet.getTime(getPlayerUUID(entityPlayer.getDisplayName())) <= 0) {
                             ((EntityPlayerMP)entityPlayer).playerNetServerHandler.kickPlayerFromServer("Your free trial of life has expired");
                         }
+                        System.out.println(activeTimeSinceLastUpdate);
                     });
-
                     Instant currentUpdate = Instant.now();
                     Instant lastUpdate = Instant.parse(playerTimeWallet.getLastUpdate()).truncatedTo(ChronoUnit.DAYS);
                     playerTimeWallet.overrideLastUpdate(currentUpdate.toString());
