@@ -12,7 +12,7 @@ import java.util.*;
 
 public class CommonProxy {
 
-    //stores the time of the players login, and then the time of the first update 
+    //stores the time of the players login, and then the time of the first update
     private static final HashMap<EntityPlayer, Date> playerlist = new HashMap<>();
     public ModConfig modConfig;
     public PlayerTimeWallet playerTimeWallet;
@@ -119,7 +119,6 @@ public class CommonProxy {
                         } else {
                             playerTimeWallet.update(getPlayerUUID(entityPlayer.getDisplayName()));
                         }
-
                         if(playerTimeWallet.getTime(getPlayerUUID(entityPlayer.getDisplayName())) <= 0) {
                             ((EntityPlayerMP)entityPlayer).playerNetServerHandler.kickPlayerFromServer("Your free trial of life has expired");
                         }
