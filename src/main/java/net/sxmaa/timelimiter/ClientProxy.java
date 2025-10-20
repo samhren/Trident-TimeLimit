@@ -1,6 +1,8 @@
 package net.sxmaa.timelimiter;
 
 import cpw.mods.fml.common.event.*;
+import cpw.mods.fml.common.FMLCommonHandler;
+import net.sxmaa.timelimiter.client.ClientBossBar;
 
 public class ClientProxy extends CommonProxy {
 
@@ -13,6 +15,7 @@ public class ClientProxy extends CommonProxy {
     // load "Do your mod setup. Build whatever data structures you care about. Register recipes."
     public void init(FMLInitializationEvent event) {
         super.init(event);
+        FMLCommonHandler.instance().bus().register(new ClientBossBar());
     }
 
     // postInit "Handle interaction with other mods, complete your setup based on this."
