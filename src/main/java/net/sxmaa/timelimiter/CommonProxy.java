@@ -2,12 +2,17 @@ package net.sxmaa.timelimiter;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.event.*;
+import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
+import cpw.mods.fml.relauncher.Side;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.common.UsernameCache;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+
+import net.sxmaa.timelimiter.network.BossBarUpdateMessage;
 
 
 public class CommonProxy {
@@ -19,6 +24,8 @@ public class CommonProxy {
     private Timer timer;
     private long now;
     private long Udelay;
+    public static final SimpleNetworkWrapper NETWORK = NetworkRegistry.INSTANCE.newSimpleChannel(Tags.MODID);
+    private static boolean messagesRegistered = false;
 
     public static String getPlayerUUID(String username) {
         for (Map.Entry<UUID, String> entry : UsernameCache.getMap().entrySet()) {
@@ -58,6 +65,8 @@ public class CommonProxy {
         this.playerTimeWallet = new PlayerTimeWallet(
             event.getModConfigurationDirectory().toString()
         );
+
+        registerNetworkMessages();
 
     }
 
@@ -105,6 +114,9 @@ public class CommonProxy {
                             ((EntityPlayerMP)entityPlayer).playerNetServerHandler.kickPlayerFromServer("Your free trial of life has expired");
                         }
                         System.out.println(activeTimeSinceLastUpdate);
+                        if (entityPlayer instanceof EntityPlayerMP) {
+                            sendBossBarUpdate((EntityPlayerMP) entityPlayer);
+                        }
                     });
                     Instant currentUpdate = Instant.now();
                     Instant lastUpdate = Instant.parse(playerTimeWallet.getLastUpdate()).truncatedTo(ChronoUnit.DAYS);
@@ -113,6 +125,7 @@ public class CommonProxy {
                     } else {
                         System.out.println("Detected new day, resetting playtimes.");
                         playerTimeWallet.reset();
+                        broadcastBossBarUpdate();
                     }
                 }
             }, new Date(time), Udelay);
@@ -129,6 +142,34 @@ public class CommonProxy {
 
     void setupTimerDelay(final long delay) {
         this.setupTimer(System.currentTimeMillis() + delay);
+    }
+
+    protected void registerNetworkMessages() {
+        if (!messagesRegistered) {
+            NETWORK.registerMessage(BossBarUpdateMessage.Handler.class, BossBarUpdateMessage.class, 0, Side.CLIENT);
+            messagesRegistered = true;
+        }
+    }
+
+    public void sendBossBarUpdate(EntityPlayerMP player) {
+        if (player == null || this.playerTimeWallet == null || this.modConfig == null) {
+            return;
+        }
+        String uuid = player.getUniqueID().toString();
+        Integer remaining = this.playerTimeWallet.TimeWallet.get(uuid);
+        if (remaining == null) {
+            remaining = this.modConfig.get_playerTimeLimit();
+        }
+        int max = Math.max(this.modConfig.get_playerTimeLimit(), 0);
+        NETWORK.sendTo(new BossBarUpdateMessage(Math.max(remaining, 0), max), player);
+    }
+
+    public void broadcastBossBarUpdate() {
+        for (EntityPlayer player : playerlist.keySet()) {
+            if (player instanceof EntityPlayerMP) {
+                sendBossBarUpdate((EntityPlayerMP) player);
+            }
+        }
     }
 
 }

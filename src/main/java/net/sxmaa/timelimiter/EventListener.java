@@ -4,6 +4,8 @@ package net.sxmaa.timelimiter;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent;
 
+import net.minecraft.entity.player.EntityPlayerMP;
+
 import java.time.Instant;
 import java.util.Date;
 
@@ -26,6 +28,9 @@ public class EventListener{
             event.setCanceled(true);
         }
         EventListener.playerOnline = true;
+        if (event.player instanceof EntityPlayerMP) {
+            TimeLimiter.proxy.sendBossBarUpdate((EntityPlayerMP) event.player);
+        }
     }
 
 
